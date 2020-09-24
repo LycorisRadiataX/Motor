@@ -2,7 +2,7 @@
  * Detail : MPC08运动控制卡C++封装, 编译时最低C++标准为C++11
  * Author : LycorisRadiata
  * Date   : 2020.9.15
- * Ver    : v1.0.0.D.1119
+ * Ver    : v2.0.0.D.1119
 */
 
 #ifndef MOTORCOMPONENT_H
@@ -58,6 +58,9 @@ namespace MotorComponent
         //获取总板卡数
         int Board();
 
+        //初始化为默认设置
+        MotorDataState InitDefaultSetting();
+        
         //设置运动模式
         MotorDataState SetMoveMode(MoveMode mode);
         MotorDataState MoveMode(MoveMode* mode);
@@ -67,22 +70,22 @@ namespace MotorComponent
         MotorDataState OriginDetectionMode(OriginDetectionMode* mode);
 
         //设置和获取运动和连续运动速度
-        MotorDataState SetMoveAndContinuousMoveSpeed(double speed);
-        MotorDataState MoveAndContinuousMoveSpeed(double* speed);
+        MotorDataState SetMoveSpeed(double speed);
+        MotorDataState MoveSpeed(double* speed);
 
         //设置和获取连续运动梯形速度
-        MotorDataState SetContinuousMoveTrapezaidalSpeed(double startingSpeed, double targetSpeed, double accelerationSpeed);
-        MotorDataState SetContinuousMoveTrapezaidalSpeed(TrapezaidalSpeed* ts);
-        MotorDataState ContinuousMoveTrapezaidalSpeed(TrapezaidalSpeed* ts);
+        MotorDataState SetFastMoveSpeed(double startingSpeed, double targetSpeed, double accelerationSpeed);
+        MotorDataState SetFastMoveSpeed(TrapezaidalSpeed* ts);
+        MotorDataState FastMoveSpeed(TrapezaidalSpeed* ts);
 
         //设置和获取插补运动速度
         MotorDataState SetInterpolationMoveSpeed(double Speed);
         MotorDataState InterpolationMoveSpeed(double* speed);
 
         //设置和获取插补连续运动速度
-        MotorDataState SetInterpolationContinuousMoveSpeed(double startingSpeed, double targetSpeed, double accelerationSpeed);
-        MotorDataState SetInterpolationContinuousMoveSpeed(TrapezaidalSpeed* ts);
-        MotorDataState InterpolationContinuousMoveSpeed(TrapezaidalSpeed* ts);
+        MotorDataState SetInterpolationFastMoveSpeed(double startingSpeed, double targetSpeed, double accelerationSpeed);
+        MotorDataState SetInterpolationFastMoveSpeed(TrapezaidalSpeed* ts);
+        MotorDataState InterpolationFastMoveSpeed(TrapezaidalSpeed* ts);
 
         //设置和获取最大速度
         MotorDataState SetMaxSpeed(double speed);
@@ -96,10 +99,10 @@ namespace MotorComponent
         int _axisChannel;
         enum MoveMode _moveMode;
         enum OriginDetectionMode _originDetectionMode;
-        double _moveAndContinuousMoveSpeed;
-        TrapezaidalSpeed _continuousMoveTrapezaidalSpeed;
+        double _moveSpeed;
+        TrapezaidalSpeed _fastMoveSpeed;
         double _interpolationMoveSpeed;
-        TrapezaidalSpeed _interpolationContinuousMoveSpeed;
+        TrapezaidalSpeed _interpolationFastMoveSpeed;
         double _maxSpeed;
     };
 

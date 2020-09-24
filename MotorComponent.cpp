@@ -9,10 +9,14 @@ namespace MotorComponent
         _axisChannel(axisChannel),
         _moveMode(static_cast<enum MoveMode>(MotorDataState::UNDEFINED)),
         _originDetectionMode(static_cast<enum OriginDetectionMode>(MotorDataState::UNDEFINED)),
-        _moveAndContinuousMoveSpeed(static_cast<double>(MotorDataState::UNDEFINED)),
-        _continuousMoveTrapezaidalSpeed{static_cast<double>(MotorDataState::UNDEFINED), static_cast<double>(MotorDataState::UNDEFINED), static_cast<double>(MotorDataState::UNDEFINED)},
+        _moveSpeed(static_cast<double>(MotorDataState::UNDEFINED)),
+        _fastMoveSpeed{static_cast<double>(MotorDataState::UNDEFINED), 
+                                            static_cast<double>(MotorDataState::UNDEFINED), 
+                                            static_cast<double>(MotorDataState::UNDEFINED)},
         _interpolationMoveSpeed(static_cast<double>(MotorDataState::UNDEFINED)),
-        _interpolationContinuousMoveSpeed{static_cast<double>(MotorDataState::UNDEFINED), static_cast<double>(MotorDataState::UNDEFINED), static_cast<double>(MotorDataState::UNDEFINED)},
+        _interpolationFastMoveSpeed{static_cast<double>(MotorDataState::UNDEFINED), 
+                                            static_cast<double>(MotorDataState::UNDEFINED), 
+                                            static_cast<double>(MotorDataState::UNDEFINED)},
         _maxSpeed(static_cast<double>(MotorDataState::UNDEFINED))
     {
 
@@ -46,6 +50,11 @@ namespace MotorComponent
     int Motor::Board()
     {
         return get_board_num();
+    }
+
+    MotorDataState Motor::InitDefaultSetting()
+    {
+
     }
 
     MotorDataState Motor::SetMoveMode(enum MoveMode mode)
@@ -92,60 +101,60 @@ namespace MotorComponent
         return MotorDataState::DEFINED;
     }
 
-    MotorDataState Motor::SetMoveAndContinuousMoveSpeed(double speed)
+    MotorDataState Motor::SetMoveSpeed(double speed)
     {
         if (_initSuccess)
         {
             if (set_conspeed(_axisChannel, speed) == 0)
             {
-                _moveAndContinuousMoveSpeed = speed;
+                _moveSpeed = speed;
                 return MotorDataState::SUCCESS;
             }
         }
         return MotorDataState::FAILURE;
     }
 
-    MotorDataState Motor::MoveAndContinuousMoveSpeed(double* speed)
+    MotorDataState Motor::MoveSpeed(double* speed)
     {
-        if (_moveAndContinuousMoveSpeed == static_cast<double>(MotorDataState::UNDEFINED))
+        if (_moveSpeed == static_cast<double>(MotorDataState::UNDEFINED))
         {
             return MotorDataState::UNDEFINED;
         }
-        *speed = _moveAndContinuousMoveSpeed;
+        *speed = _moveSpeed;
         return MotorDataState::DEFINED;
     }
-
-    MotorDataState Motor::SetContinuousMoveTrapezaidalSpeed(double startingSpeed, double targetSpeed, double accelerationSpeed)
+    
+    MotorDataState Motor::SetFastMoveSpeed(double startingSpeed, double targetSpeed, double accelerationSpeed)
     {
         if (_initSuccess)
         {
             if (set_profile(_axisChannel, startingSpeed, targetSpeed, accelerationSpeed) == 0)
             {
-                _continuousMoveTrapezaidalSpeed.startingSpeed = startingSpeed;
-                _continuousMoveTrapezaidalSpeed.targetSpeed = targetSpeed;
-                _continuousMoveTrapezaidalSpeed.accelerationSpeed = accelerationSpeed;
+                _fastMoveSpeed.startingSpeed = startingSpeed;
+                _fastMoveSpeed.targetSpeed = targetSpeed;
+                _fastMoveSpeed.accelerationSpeed = accelerationSpeed;
                 return MotorDataState::SUCCESS;
             }
         }
         return MotorDataState::FAILURE;
     }
 
-    MotorDataState Motor::SetContinuousMoveTrapezaidalSpeed(TrapezaidalSpeed* ts)
+    MotorDataState Motor::SetFastMoveSpeed(TrapezaidalSpeed* ts)
     {
-        return SetContinuousMoveTrapezaidalSpeed(ts->startingSpeed, ts->targetSpeed, ts->accelerationSpeed);
+        return SetFastMoveSpeed(ts->startingSpeed, ts->targetSpeed, ts->accelerationSpeed);
     }
 
-    MotorDataState Motor::ContinuousMoveTrapezaidalSpeed(TrapezaidalSpeed* ts)
+    MotorDataState Motor::FastMoveSpeed(TrapezaidalSpeed* ts)
     {
-        if (_continuousMoveTrapezaidalSpeed.startingSpeed == static_cast<double>(MotorDataState::UNDEFINED) ||
-                _continuousMoveTrapezaidalSpeed.targetSpeed == static_cast<double>(MotorDataState::UNDEFINED) ||
-                _continuousMoveTrapezaidalSpeed.accelerationSpeed == static_cast<double>(MotorDataState::UNDEFINED))
+        if (_fastMoveSpeed.startingSpeed == static_cast<double>(MotorDataState::UNDEFINED) ||
+                _fastMoveSpeed.targetSpeed == static_cast<double>(MotorDataState::UNDEFINED) ||
+                _fastMoveSpeed.accelerationSpeed == static_cast<double>(MotorDataState::UNDEFINED))
         {
             return MotorDataState::UNDEFINED;
         }
-        ts->startingSpeed = _continuousMoveTrapezaidalSpeed.startingSpeed;
-        ts->targetSpeed = _continuousMoveTrapezaidalSpeed.targetSpeed;
-        ts->accelerationSpeed = _continuousMoveTrapezaidalSpeed.accelerationSpeed;
+        ts->startingSpeed = _fastMoveSpeed.startingSpeed;
+        ts->targetSpeed = _fastMoveSpeed.targetSpeed;
+        ts->accelerationSpeed = _fastMoveSpeed.accelerationSpeed;
         return MotorDataState::DEFINED;
     }
 
@@ -172,37 +181,37 @@ namespace MotorComponent
         return MotorDataState::DEFINED;
     }
 
-    MotorDataState Motor::SetInterpolationContinuousMoveSpeed(double startingSpeed, double targetSpeed, double accelerationSpeed)
+    MotorDataState Motor::SetInterpolationFastMoveSpeed(double startingSpeed, double targetSpeed, double accelerationSpeed)
     {
         if (_initSuccess)
         {
             if (set_vector_profile(startingSpeed, targetSpeed, accelerationSpeed) == 0)
             {
-                _interpolationContinuousMoveSpeed.startingSpeed = startingSpeed;
-                _interpolationContinuousMoveSpeed.targetSpeed = targetSpeed;
-                _interpolationContinuousMoveSpeed.accelerationSpeed = accelerationSpeed;
+                _interpolationFastMoveSpeed.startingSpeed = startingSpeed;
+                _interpolationFastMoveSpeed.targetSpeed = targetSpeed;
+                _interpolationFastMoveSpeed.accelerationSpeed = accelerationSpeed;
                 return MotorDataState::SUCCESS;
             }
         }
         return MotorDataState::FAILURE;
     }
 
-    MotorDataState Motor::SetInterpolationContinuousMoveSpeed(TrapezaidalSpeed* ts)
+    MotorDataState Motor::SetInterpolationFastMoveSpeed(TrapezaidalSpeed* ts)
     {
-        return SetInterpolationContinuousMoveSpeed(ts->startingSpeed, ts->targetSpeed, ts->accelerationSpeed);
+        return SetInterpolationFastMoveSpeed(ts->startingSpeed, ts->targetSpeed, ts->accelerationSpeed);
     }
 
-    MotorDataState Motor::InterpolationContinuousMoveSpeed(TrapezaidalSpeed* ts)
+    MotorDataState Motor::InterpolationFastMoveSpeed(TrapezaidalSpeed* ts)
     {
-        if (_interpolationContinuousMoveSpeed.startingSpeed == static_cast<double>(MotorDataState::UNDEFINED) ||
-                _interpolationContinuousMoveSpeed.targetSpeed == static_cast<double>(MotorDataState::UNDEFINED) ||
-                _interpolationContinuousMoveSpeed.accelerationSpeed == static_cast<double>(MotorDataState::UNDEFINED))
+        if (_interpolationFastMoveSpeed.startingSpeed == static_cast<double>(MotorDataState::UNDEFINED) ||
+                _interpolationFastMoveSpeed.targetSpeed == static_cast<double>(MotorDataState::UNDEFINED) ||
+                _interpolationFastMoveSpeed.accelerationSpeed == static_cast<double>(MotorDataState::UNDEFINED))
         {
             return MotorDataState::UNDEFINED;
         }
-        ts->startingSpeed = _interpolationContinuousMoveSpeed.startingSpeed;
-        ts->targetSpeed = _interpolationContinuousMoveSpeed.targetSpeed;
-        ts->accelerationSpeed = _interpolationContinuousMoveSpeed.accelerationSpeed;
+        ts->startingSpeed = _interpolationFastMoveSpeed.startingSpeed;
+        ts->targetSpeed = _interpolationFastMoveSpeed.targetSpeed;
+        ts->accelerationSpeed = _interpolationFastMoveSpeed.accelerationSpeed;
         return MotorDataState::DEFINED;
     }
 
