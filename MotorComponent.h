@@ -2,7 +2,7 @@
  * Detail : MPC08运动控制卡C++封装, 编译时最低C++标准为C++11
  * Author : LycorisRadiata
  * Date   : 2020.9.15
- * Ver    : v2.0.0.D.1119
+ * Ver    : v2.0.0.D.1612
 */
 
 #ifndef MOTORCOMPONENT_H
