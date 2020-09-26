@@ -112,6 +112,11 @@ namespace MotorComponent
 
         MotorControlState FastOriginMove(MoveDirection direction);
 
+        MotorControlState SetAbsolutePosition(long position);
+
+        MotorControlState ResetPosition();
+
+        MotorControlState SetPositionTriggerPoint(long startingPosition, long targetPosition);
     private:
         static bool _initSuccess;
         int _axisChannel;
