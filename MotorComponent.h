@@ -2,7 +2,7 @@
  * Detail : MPC08运动控制卡C++封装, 编译时最低C++标准为C++11
  * Author : LycorisRadiata
  * Date   : 2020.9.15
- * Ver    : v2.0.1.D.1007
+ * Ver    : v2.1.1.D.1503
 */
 
 #ifndef MOTORCOMPONENT_H_
@@ -13,13 +13,19 @@
 namespace MotorComponent
 {
 
-    enum class MotorDataState : int
+    enum class MotorControlState : int
     {
         UNDEFINED = -1,
         DEFINED = 1,
         SUCCESS = 2,
         FAILURE = 3,
         PARAMETER_ERROR = 4
+    };
+
+    enum class MoveDirection : int
+    {
+        POSITIVE_DIRECTION = 1,
+        NEGATIVE_DIRECTION = -1
     };
 
     enum class MoveMode : int
@@ -59,40 +65,52 @@ namespace MotorComponent
         int Board();
 
         //初始化为默认设置
-        MotorDataState InitDefaultSetting();
+        MotorControlState InitDefaultSetting();
         
         //设置运动模式
-        MotorDataState SetMoveMode(MoveMode mode);
-        MotorDataState MoveMode(MoveMode* mode);
+        MotorControlState SetMoveMode(MoveMode mode);
+        MotorControlState MoveMode(MoveMode* mode);
 
         //设置回原点时的检测模式
-        MotorDataState SetOriginDetectionMode(OriginDetectionMode mode);
-        MotorDataState OriginDetectionMode(OriginDetectionMode* mode);
+        MotorControlState SetOriginDetectionMode(OriginDetectionMode mode);
+        MotorControlState OriginDetectionMode(OriginDetectionMode* mode);
 
         //设置和获取运动和连续运动速度
-        MotorDataState SetMoveSpeed(double speed);
-        MotorDataState MoveSpeed(double* speed);
+        MotorControlState SetMoveSpeed(double speed);
+        MotorControlState MoveSpeed(double* speed);
 
         //设置和获取连续运动梯形速度
-        MotorDataState SetFastMoveSpeed(double startingSpeed, double targetSpeed, double accelerationSpeed);
-        MotorDataState SetFastMoveSpeed(TrapezaidalSpeed* ts);
-        MotorDataState FastMoveSpeed(TrapezaidalSpeed* ts);
+        MotorControlState SetFastMoveSpeed(double startingSpeed, double targetSpeed, double accelerationSpeed);
+        MotorControlState SetFastMoveSpeed(TrapezaidalSpeed* ts);
+        MotorControlState FastMoveSpeed(TrapezaidalSpeed* ts);
 
         //设置和获取插补运动速度
-        MotorDataState SetInterpolationMoveSpeed(double Speed);
-        MotorDataState InterpolationMoveSpeed(double* speed);
+        MotorControlState SetInterpolationMoveSpeed(double Speed);
+        MotorControlState InterpolationMoveSpeed(double* speed);
 
         //设置和获取插补连续运动速度
-        MotorDataState SetInterpolationFastMoveSpeed(double startingSpeed, double targetSpeed, double accelerationSpeed);
-        MotorDataState SetInterpolationFastMoveSpeed(TrapezaidalSpeed* ts);
-        MotorDataState InterpolationFastMoveSpeed(TrapezaidalSpeed* ts);
+        MotorControlState SetInterpolationFastMoveSpeed(double startingSpeed, double targetSpeed, double accelerationSpeed);
+        MotorControlState SetInterpolationFastMoveSpeed(TrapezaidalSpeed* ts);
+        MotorControlState InterpolationFastMoveSpeed(TrapezaidalSpeed* ts);
 
         //设置和获取最大速度
-        MotorDataState SetMaxSpeed(double speed);
-        MotorDataState MaxSpeed(double* speed);
+        MotorControlState SetMaxSpeed(double speed);
+        MotorControlState MaxSpeed(double* speed);
 
         //获取运行时实际速度
-        MotorDataState RunningSpeed(double* speed);
+        MotorControlState RunningSpeed(double* speed);
+
+        MotorControlState Move(long distance, MoveDirection direction);
+
+        MotorControlState ContinuousMove(MoveDirection direction);
+
+        MotorControlState FastMove(long distance, MoveDirection direction);
+
+        MotorControlState FastContinuousMove(MoveDirection direction);
+
+        MotorControlState OriginMove(MoveDirection direction);
+
+        MotorControlState FastOriginMove(MoveDirection direction);
 
     private:
         static bool _initSuccess;
