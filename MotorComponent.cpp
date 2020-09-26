@@ -61,6 +61,10 @@ namespace MotorComponent
     {
         if (_initSuccess)
         {
+            if (mode != MoveMode::PULSE_AND_DIRECTION || mode != MoveMode::DOUBLE_PULSE)
+            {
+                return MotorDataState::PARAMETER_ERROR;
+            }
             if (set_outmode(_axisChannel, static_cast<int>(mode), 1) == 0)
             {
                 return MotorDataState::SUCCESS;
@@ -71,6 +75,10 @@ namespace MotorComponent
 
     MotorDataState Motor::MoveMode(enum MoveMode *mode)
     {
+        if (mode == nullptr)
+        {
+            return MotorDataState::PARAMETER_ERROR;
+        }
         if (static_cast<MotorDataState>(_moveMode) == MotorDataState::UNDEFINED)
         {
             return MotorDataState::UNDEFINED;
@@ -83,6 +91,10 @@ namespace MotorComponent
     {
         if (_initSuccess)
         {
+            if (mode != OriginDetectionMode::SWITCH_SIGNAL || mode != OriginDetectionMode::SWITCH_SIGNAL_AND_ENCODER_SIGNAL)
+            {
+                return MotorDataState::PARAMETER_ERROR;
+            }
             if (set_home_mode(_axisChannel, static_cast<int>(mode)) == 0)
             {
                 return MotorDataState::SUCCESS;
@@ -93,6 +105,10 @@ namespace MotorComponent
 
     MotorDataState Motor::OriginDetectionMode(enum OriginDetectionMode *mode)
     {
+        if (mode == nullptr)
+        {
+            return MotorDataState::PARAMETER_ERROR;
+        }
         if (static_cast<MotorDataState>(_originDetectionMode) == MotorDataState::UNDEFINED)
         {
             return MotorDataState::UNDEFINED;
@@ -105,6 +121,10 @@ namespace MotorComponent
     {
         if (_initSuccess)
         {
+            if (speed <= 0)
+            {
+                return MotorDataState::PARAMETER_ERROR;
+            }
             if (set_conspeed(_axisChannel, speed) == 0)
             {
                 _moveSpeed = speed;
@@ -116,6 +136,10 @@ namespace MotorComponent
 
     MotorDataState Motor::MoveSpeed(double* speed)
     {
+        if (speed == nullptr)
+        {
+            return MotorDataState::PARAMETER_ERROR;
+        }
         if (_moveSpeed == static_cast<double>(MotorDataState::UNDEFINED))
         {
             return MotorDataState::UNDEFINED;
@@ -128,6 +152,10 @@ namespace MotorComponent
     {
         if (_initSuccess)
         {
+            if (startingSpeed <= 0 || targetSpeed <= 0 || accelerationSpeed <= 0 || startingSpeed >= targetSpeed)
+            {
+                return MotorDataState::PARAMETER_ERROR;
+            }
             if (set_profile(_axisChannel, startingSpeed, targetSpeed, accelerationSpeed) == 0)
             {
                 _fastMoveSpeed.startingSpeed = startingSpeed;
@@ -141,11 +169,19 @@ namespace MotorComponent
 
     MotorDataState Motor::SetFastMoveSpeed(TrapezaidalSpeed* ts)
     {
+        if (ts == nullptr)
+        {
+            return MotorDataState::PARAMETER_ERROR;
+        }
         return SetFastMoveSpeed(ts->startingSpeed, ts->targetSpeed, ts->accelerationSpeed);
     }
 
     MotorDataState Motor::FastMoveSpeed(TrapezaidalSpeed* ts)
     {
+        if (ts == nullptr)
+        {
+            return MotorDataState::PARAMETER_ERROR;
+        }
         if (_fastMoveSpeed.startingSpeed == static_cast<double>(MotorDataState::UNDEFINED) ||
                 _fastMoveSpeed.targetSpeed == static_cast<double>(MotorDataState::UNDEFINED) ||
                 _fastMoveSpeed.accelerationSpeed == static_cast<double>(MotorDataState::UNDEFINED))
@@ -162,6 +198,10 @@ namespace MotorComponent
     {
         if (_initSuccess)
         {
+            if (speed <= 0)
+            {
+                return MotorDataState::PARAMETER_ERROR;
+            }
             if (set_vector_conspeed(speed) == 0)
             {
                 _interpolationMoveSpeed = speed;
@@ -173,6 +213,10 @@ namespace MotorComponent
 
     MotorDataState Motor::InterpolationMoveSpeed(double* speed)
     {
+        if (speed == nullptr)
+        {
+            return MotorDataState::PARAMETER_ERROR;
+        }
         if (_interpolationMoveSpeed == static_cast<double>(MotorDataState::UNDEFINED))
         {
             return MotorDataState::UNDEFINED;
@@ -185,6 +229,10 @@ namespace MotorComponent
     {
         if (_initSuccess)
         {
+            if (startingSpeed <= 0 || targetSpeed <= 0 || accelerationSpeed <= 0 || startingSpeed >= targetSpeed)
+            {
+                return MotorDataState::PARAMETER_ERROR;
+            }
             if (set_vector_profile(startingSpeed, targetSpeed, accelerationSpeed) == 0)
             {
                 _interpolationFastMoveSpeed.startingSpeed = startingSpeed;
@@ -198,11 +246,19 @@ namespace MotorComponent
 
     MotorDataState Motor::SetInterpolationFastMoveSpeed(TrapezaidalSpeed* ts)
     {
+        if (ts == nullptr)
+        {
+            return MotorDataState::PARAMETER_ERROR;
+        }
         return SetInterpolationFastMoveSpeed(ts->startingSpeed, ts->targetSpeed, ts->accelerationSpeed);
     }
 
     MotorDataState Motor::InterpolationFastMoveSpeed(TrapezaidalSpeed* ts)
     {
+        if (ts == nullptr)
+        {
+            return MotorDataState::PARAMETER_ERROR;
+        }
         if (_interpolationFastMoveSpeed.startingSpeed == static_cast<double>(MotorDataState::UNDEFINED) ||
                 _interpolationFastMoveSpeed.targetSpeed == static_cast<double>(MotorDataState::UNDEFINED) ||
                 _interpolationFastMoveSpeed.accelerationSpeed == static_cast<double>(MotorDataState::UNDEFINED))
@@ -219,6 +275,10 @@ namespace MotorComponent
     {
         if (_initSuccess)
         {
+            if (speed <= 0)
+            {
+                return MotorDataState::PARAMETER_ERROR;
+            }
             if (set_maxspeed(_axisChannel, speed) == 0)
             {
                 _maxSpeed = speed;
@@ -230,6 +290,10 @@ namespace MotorComponent
 
     MotorDataState Motor::MaxSpeed(double* speed)
     {
+        if (speed == nullptr)
+        {
+            return MotorDataState::PARAMETER_ERROR;
+        }
         if (_maxSpeed == static_cast<double>(MotorDataState::UNDEFINED))
         {
             return MotorDataState::UNDEFINED;
@@ -240,6 +304,10 @@ namespace MotorComponent
 
     MotorDataState Motor::RunningSpeed(double* speed)
     {
+        if (speed == nullptr)
+        {
+            return MotorDataState::PARAMETER_ERROR;
+        }
         *speed = get_rate(_axisChannel);
         if (*speed == -1)
         {
