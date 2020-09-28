@@ -316,33 +316,13 @@ namespace MotorComponent
         return MotorControlState::DEFINED;
     }
 
-    MotorControlState Motor::Move(long distance, MoveDirection direction)
+    MotorControlState Motor::Move(long distance)
     {
         if (_initSuccess)
         {
-            if (distance <= 0)
+            if (con_pmove(_axisChannel, distance) == 0)
             {
-                return MotorControlState::PARAMETER_ERROR;
-            }
-            switch (direction)
-            {
-                case MoveDirection::POSITIVE_DIRECTION:
-                {
-                    if (con_pmove(_axisChannel, distance) == 0)
-                    {
-                        return MotorControlState::SUCCESS;
-                    }
-                    break;
-                }
-
-                case MoveDirection::NEGATIVE_DIRECTION:
-                {
-                    if (con_pmove(_axisChannel, ~distance + 1) == 0)
-                    {
-                        return MotorControlState::SUCCESS;
-                    }
-                    break;
-                }
+                return MotorControlState::SUCCESS;
             }
         }
         return MotorControlState::FAILURE;
@@ -360,33 +340,13 @@ namespace MotorComponent
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::FastMove(long distance, MoveDirection direction)
+    MotorControlState Motor::FastMove(long distance)
     {
         if (_initSuccess)
         {
-            if (distance <= 0)
+            if (fast_pmove(_axisChannel, distance) == 0)
             {
-                return MotorControlState::PARAMETER_ERROR;
-            }
-            switch (direction)
-            {
-                case MoveDirection::POSITIVE_DIRECTION:
-                {
-                    if (fast_pmove(_axisChannel, distance) == 0)
-                    {
-                        return MotorControlState::SUCCESS;
-                    }
-                    break;
-                }
-
-                case MoveDirection::NEGATIVE_DIRECTION:
-                {
-                    if (fast_pmove(_axisChannel, ~distance + 1) == 0)
-                    {
-                        return MotorControlState::SUCCESS;
-                    }
-                    break;
-                }
+                return MotorControlState::SUCCESS;
             }
         }
         return MotorControlState::FAILURE;
@@ -421,6 +381,138 @@ namespace MotorComponent
         if (_initSuccess)
         {
             if (fast_hmove(_axisChannel, static_cast<int>(direction)) == 0)
+            {
+                return MotorControlState::SUCCESS;
+            }
+        }
+        return MotorControlState::FAILURE;
+    }
+
+    MotorControlState Motor::SetAbsolutePosition(long position)
+    {
+        if (_initSuccess)
+        {
+            if (set_abs_pos(_axisChannel, position) == 0)
+            {
+                return MotorControlState::SUCCESS;
+            }
+        }
+        return MotorControlState::FAILURE;
+    }
+
+    MotorControlState Motor::ResetPosition()
+    {
+        if (_initSuccess)
+        {
+            if (reset_pos(_axisChannel) == 0)
+            {
+                return MotorControlState::SUCCESS;
+            }
+        }
+        return MotorControlState::FAILURE;
+    }
+
+    MotorControlState Motor::SetPositionTriggerPoint(long startingPosition, long targetPosition)
+    {
+        if (_initSuccess)
+        {
+            if (set_io_pos(_axisChannel, startingPosition, targetPosition) == 0)
+            {
+                return MotorControlState::SUCCESS;
+            }
+        }
+        return MotorControlState::FAILURE;
+    }
+
+    MotorControlState Motor::SetPositionTriggerIsValid(int card, PositionTriggerFlag flag)
+    {
+        if (_initSuccess)
+        {
+            if (enable_io_pos(card, static_cast<int>(flag)) == 0)
+            {
+                return MotorControlState::SUCCESS;
+            }
+        }
+        return MotorControlState::FAILURE;
+    }
+
+    MotorControlState Motor::SetDecelerationSignalIsValid(DecelerationSignalFlag flag)
+    {
+        if (_initSuccess)
+        {
+            if (enable_sd(_axisChannel, static_cast<int>(flag)) == 0)
+            {
+                return MotorControlState::SUCCESS;
+            }
+        }
+        return MotorControlState::FAILURE;
+    }
+
+    MotorControlState Motor::SetLimitSignalIsValid(LimitSignalFlag flag)
+    {
+        if (_initSuccess)
+        {
+            if (enable_el(_axisChannel, static_cast<int>(flag)) == 0)
+            {
+                return MotorControlState::SUCCESS;
+            }
+        }
+        return MotorControlState::FAILURE;
+    }
+
+    MotorControlState Motor::SetOriginSignalIsValid(OriginSignalFlag flag)
+    {
+        if (_initSuccess)
+        {
+            if (enable_org(_axisChannel, static_cast<int>(flag)) == 0)
+            {
+                return MotorControlState::SUCCESS;
+            }
+        }
+        return MotorControlState::FAILURE;
+    }
+
+    MotorControlState Motor::SetDecelerationSignalMode(DecelerationSignalMode mode)
+    {
+        if (_initSuccess)
+        {
+            if (set_sd_logic(_axisChannel, static_cast<int>(mode)) == 0)
+            {
+                return MotorControlState::SUCCESS;
+            }
+        }
+        return MotorControlState::FAILURE;
+    }
+
+    MotorControlState Motor::SetLimitSignalMode(LimitSignalMode mode)
+    {
+        if (_initSuccess)
+        {
+            if (set_el_logic(_axisChannel, static_cast<int>(mode)) == 0)
+            {
+                return MotorControlState::SUCCESS;
+            }
+        }
+        return MotorControlState::FAILURE;
+    }
+
+    MotorControlState Motor::SetOriginSignalMode(OriginSignalMode mode)
+    {
+        if (_initSuccess)
+        {
+            if (set_org_logic(_axisChannel, static_cast<int>(mode)) == 0)
+            {
+                return MotorControlState::SUCCESS;
+            }
+        }
+        return MotorControlState::FAILURE;
+    }
+
+    MotorControlState Motor::SetAlarmSignalMode(AlarmSignalMode mode)
+    {
+        if (_initSuccess)
+        {
+            if (set_alm_logic(_axisChannel, static_cast<int>(mode)) == 0)
             {
                 return MotorControlState::SUCCESS;
             }

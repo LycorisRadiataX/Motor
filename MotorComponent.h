@@ -13,6 +13,13 @@
 namespace MotorComponent
 {
 
+    struct TrapezaidalSpeed
+    {
+        double startingSpeed;
+        double targetSpeed;
+        double accelerationSpeed;
+    };
+
     enum class MotorControlState : int
     {
         UNDEFINED = -1,
@@ -40,11 +47,52 @@ namespace MotorComponent
         SWITCH_SIGNAL_AND_ENCODER_SIGNAL = 1
     };
 
-    struct TrapezaidalSpeed
+    enum class PositionTriggerFlag : int
     {
-        double startingSpeed;
-        double targetSpeed;
-        double accelerationSpeed;
+        SIGNAL_VALID = 1,
+        SIGNAL_INVALID = 0
+    };
+
+    enum class DecelerationSignalFlag : int
+    {
+        SIGNAL_VALID = 1,
+        SIGNAL_INVALID = 0
+    };
+
+    enum class LimitSignalFlag : int
+    {
+        SIGNAL_VALID = 1,
+        SIGNAL_INVALID = 0
+    };
+
+    enum class OriginSignalFlag : int
+    {
+        SIGNAL_VALID = 1,
+        SIGNAL_INVALID = 0
+    };
+
+    enum class DecelerationSignalMode : int
+    {
+        HIGH_LEVEL = 1,
+        LOW_LEVEL = 0
+    };
+
+    enum class LimitSignalMode : int
+    {
+        HIGH_LEVEL = 1,
+        LOW_LEVEL = 0
+    };
+
+    enum class OriginSignalMode : int
+    {
+        HIGH_LEVEL = 1,
+        LOW_LEVEL = 0
+    };
+
+    enum class AlarmSignalMode : int
+    {
+        HIGH_LEVEL = 1,
+        LOW_LEVEL = 0
     };
 
     class Motor
@@ -100,11 +148,11 @@ namespace MotorComponent
         //获取运行时实际速度
         MotorControlState RunningSpeed(double* speed);
 
-        MotorControlState Move(long distance, MoveDirection direction);
+        MotorControlState Move(long distance);
 
         MotorControlState ContinuousMove(MoveDirection direction);
 
-        MotorControlState FastMove(long distance, MoveDirection direction);
+        MotorControlState FastMove(long distance);
 
         MotorControlState FastContinuousMove(MoveDirection direction);
 
@@ -117,6 +165,22 @@ namespace MotorComponent
         MotorControlState ResetPosition();
 
         MotorControlState SetPositionTriggerPoint(long startingPosition, long targetPosition);
+
+        MotorControlState SetPositionTriggerIsValid(int card, PositionTriggerFlag flag);
+
+        MotorControlState SetDecelerationSignalIsValid(DecelerationSignalFlag flag);
+
+        MotorControlState SetLimitSignalIsValid(LimitSignalFlag flag);
+
+        MotorControlState SetOriginSignalIsValid(OriginSignalFlag flag);
+
+        MotorControlState SetDecelerationSignalMode(DecelerationSignalMode mode);
+
+        MotorControlState SetLimitSignalMode(LimitSignalMode mode);
+
+        MotorControlState SetOriginSignalMode(OriginSignalMode mode);
+
+        MotorControlState SetAlarmSignalMode(AlarmSignalMode mode);
     private:
         static bool _initSuccess;
         int _axisChannel;
@@ -127,6 +191,14 @@ namespace MotorComponent
         double _interpolationMoveSpeed;
         TrapezaidalSpeed _interpolationFastMoveSpeed;
         double _maxSpeed;
+        enum PositionTriggerFlag _positionTriggerFlag;
+        enum DecelerationSignalFlag _decelerationSignalFlag;
+        enum LimitSignalFlag _limitSignalFlag;
+        enum OriginSignalFlag _originSignalFlag;
+        enum DecelerationSignalMode _decelerationSignalMode;
+        enum LimitSignalMode _limitSignalMode;
+        enum OriginSignalMode _originSignalMode;
+        enum AlarmSignalMode _alarmSignalMode;
     };
 
 }
