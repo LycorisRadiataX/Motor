@@ -17,7 +17,15 @@ namespace MotorComponent
         _interpolationFastMoveSpeed{static_cast<double>(MotorControlState::UNDEFINED), 
                                             static_cast<double>(MotorControlState::UNDEFINED), 
                                             static_cast<double>(MotorControlState::UNDEFINED)},
-        _maxSpeed(static_cast<double>(MotorControlState::UNDEFINED))
+        _maxSpeed(static_cast<double>(MotorControlState::UNDEFINED)),
+        _positionTriggerFlag(static_cast<enum PositionTriggerFlag>(MotorControlState::UNDEFINED)),
+        _decelerationSignalFlag(static_cast<enum DecelerationSignalFlag>(MotorControlState::UNDEFINED)),
+        _limitSignalFlag(static_cast<enum LimitSignalFlag>(MotorControlState::UNDEFINED)),
+        _originSignalFlag(static_cast<enum OriginSignalFlag>(MotorControlState::UNDEFINED)),
+        _decelerationSignalMode(static_cast<enum DecelerationSignalMode>(MotorControlState::UNDEFINED)),
+        _limitSignalMode(static_cast<enum LimitSignalMode>(MotorControlState::UNDEFINED)),
+        _originSignalMode(static_cast<enum OriginSignalMode>(MotorControlState::UNDEFINED)),
+        _alarmSignalMode(static_cast<enum AlarmSignalMode>(MotorControlState::UNDEFINED))
     {
 
     }
@@ -75,13 +83,13 @@ namespace MotorComponent
 
     MotorControlState Motor::MoveMode(enum MoveMode *mode)
     {
-        if (mode == nullptr)
-        {
-            return MotorControlState::PARAMETER_ERROR;
-        }
         if (static_cast<MotorControlState>(_moveMode) == MotorControlState::UNDEFINED)
         {
             return MotorControlState::UNDEFINED;
+        }
+        if (mode == nullptr)
+        {
+            return MotorControlState::PARAMETER_ERROR;
         }
         *mode = _moveMode;
         return MotorControlState::DEFINED;
@@ -105,13 +113,13 @@ namespace MotorComponent
 
     MotorControlState Motor::OriginDetectionMode(enum OriginDetectionMode *mode)
     {
-        if (mode == nullptr)
-        {
-            return MotorControlState::PARAMETER_ERROR;
-        }
         if (static_cast<MotorControlState>(_originDetectionMode) == MotorControlState::UNDEFINED)
         {
             return MotorControlState::UNDEFINED;
+        }
+        if (mode == nullptr)
+        {
+            return MotorControlState::PARAMETER_ERROR;
         }
         *mode = _originDetectionMode;
         return MotorControlState::DEFINED;
@@ -136,13 +144,13 @@ namespace MotorComponent
 
     MotorControlState Motor::MoveSpeed(double* speed)
     {
-        if (speed == nullptr)
-        {
-            return MotorControlState::PARAMETER_ERROR;
-        }
         if (_moveSpeed == static_cast<double>(MotorControlState::UNDEFINED))
         {
             return MotorControlState::UNDEFINED;
+        }
+        if (speed == nullptr)
+        {
+            return MotorControlState::PARAMETER_ERROR;
         }
         *speed = _moveSpeed;
         return MotorControlState::DEFINED;
@@ -178,15 +186,15 @@ namespace MotorComponent
 
     MotorControlState Motor::FastMoveSpeed(TrapezaidalSpeed* ts)
     {
-        if (ts == nullptr)
-        {
-            return MotorControlState::PARAMETER_ERROR;
-        }
         if (_fastMoveSpeed.startingSpeed == static_cast<double>(MotorControlState::UNDEFINED) ||
                 _fastMoveSpeed.targetSpeed == static_cast<double>(MotorControlState::UNDEFINED) ||
                 _fastMoveSpeed.accelerationSpeed == static_cast<double>(MotorControlState::UNDEFINED))
         {
             return MotorControlState::UNDEFINED;
+        }
+        if (ts == nullptr)
+        {
+            return MotorControlState::PARAMETER_ERROR;
         }
         ts->startingSpeed = _fastMoveSpeed.startingSpeed;
         ts->targetSpeed = _fastMoveSpeed.targetSpeed;
@@ -213,13 +221,13 @@ namespace MotorComponent
 
     MotorControlState Motor::InterpolationMoveSpeed(double* speed)
     {
-        if (speed == nullptr)
-        {
-            return MotorControlState::PARAMETER_ERROR;
-        }
         if (_interpolationMoveSpeed == static_cast<double>(MotorControlState::UNDEFINED))
         {
             return MotorControlState::UNDEFINED;
+        }
+         if (speed == nullptr)
+        {
+            return MotorControlState::PARAMETER_ERROR;
         }
         *speed = _interpolationMoveSpeed;
         return MotorControlState::DEFINED;
@@ -255,15 +263,15 @@ namespace MotorComponent
 
     MotorControlState Motor::InterpolationFastMoveSpeed(TrapezaidalSpeed* ts)
     {
-        if (ts == nullptr)
-        {
-            return MotorControlState::PARAMETER_ERROR;
-        }
         if (_interpolationFastMoveSpeed.startingSpeed == static_cast<double>(MotorControlState::UNDEFINED) ||
                 _interpolationFastMoveSpeed.targetSpeed == static_cast<double>(MotorControlState::UNDEFINED) ||
                 _interpolationFastMoveSpeed.accelerationSpeed == static_cast<double>(MotorControlState::UNDEFINED))
         {
             return MotorControlState::UNDEFINED;
+        }
+        if (ts == nullptr)
+        {
+            return MotorControlState::PARAMETER_ERROR;
         }
         ts->startingSpeed = _interpolationFastMoveSpeed.startingSpeed;
         ts->targetSpeed = _interpolationFastMoveSpeed.targetSpeed;
@@ -290,13 +298,13 @@ namespace MotorComponent
 
     MotorControlState Motor::MaxSpeed(double* speed)
     {
-        if (speed == nullptr)
-        {
-            return MotorControlState::PARAMETER_ERROR;
-        }
         if (_maxSpeed == static_cast<double>(MotorControlState::UNDEFINED))
         {
             return MotorControlState::UNDEFINED;
+        }
+        if (speed == nullptr)
+        {
+            return MotorControlState::PARAMETER_ERROR;
         }
         *speed = _maxSpeed;
         return MotorControlState::DEFINED;
@@ -304,15 +312,16 @@ namespace MotorComponent
 
     MotorControlState Motor::RunningSpeed(double* speed)
     {
+        double runSpeed = get_rate(_axisChannel);
+        if (runSpeed == -1)
+        {
+            return MotorControlState::UNDEFINED;
+        }
         if (speed == nullptr)
         {
             return MotorControlState::PARAMETER_ERROR;
         }
-        *speed = get_rate(_axisChannel);
-        if (*speed == -1)
-        {
-            return MotorControlState::UNDEFINED;
-        }
+        *speed = runSpeed;
         return MotorControlState::DEFINED;
     }
 
@@ -320,6 +329,10 @@ namespace MotorComponent
     {
         if (_initSuccess)
         {
+            if (MoveSpeed(nullptr) == MotorControlState::UNDEFINED)
+            {
+                return MotorControlState::FAILURE;
+            }
             if (con_pmove(_axisChannel, distance) == 0)
             {
                 return MotorControlState::SUCCESS;
@@ -332,6 +345,10 @@ namespace MotorComponent
     {
         if (_initSuccess)
         {
+            if (MoveSpeed(nullptr) == MotorControlState::UNDEFINED)
+            {
+                return MotorControlState::FAILURE;
+            }
             if (con_vmove(_axisChannel, static_cast<int>(direction)) == 0)
             {
                 return MotorControlState::SUCCESS;
@@ -344,6 +361,10 @@ namespace MotorComponent
     {
         if (_initSuccess)
         {
+            if (FastMoveSpeed(nullptr) == MotorControlState::UNDEFINED)
+            {
+                return MotorControlState::FAILURE;
+            }
             if (fast_pmove(_axisChannel, distance) == 0)
             {
                 return MotorControlState::SUCCESS;
@@ -356,6 +377,10 @@ namespace MotorComponent
     {
         if (_initSuccess)
         {
+            if (FastMoveSpeed(nullptr) == MotorControlState::UNDEFINED)
+            {
+                return MotorControlState::FAILURE;
+            }
             if (fast_vmove(_axisChannel, static_cast<int>(direction)) == 0)
             {
                 return MotorControlState::SUCCESS;
@@ -368,6 +393,10 @@ namespace MotorComponent
     {
         if (_initSuccess)
         {
+            if (MoveSpeed(nullptr) == MotorControlState::UNDEFINED)
+            {
+                return MotorControlState::FAILURE;
+            }
             if (con_hmove(_axisChannel, static_cast<int>(direction)) == 0)
             {
                 return MotorControlState::SUCCESS;
@@ -380,6 +409,10 @@ namespace MotorComponent
     {
         if (_initSuccess)
         {
+            if (FastMoveSpeed(nullptr) == MotorControlState::UNDEFINED)
+            {
+                return MotorControlState::FAILURE;
+            }
             if (fast_hmove(_axisChannel, static_cast<int>(direction)) == 0)
             {
                 return MotorControlState::SUCCESS;
@@ -398,6 +431,40 @@ namespace MotorComponent
             }
         }
         return MotorControlState::FAILURE;
+    }
+
+    MotorControlState Motor::AbsolutePosition(long* position)
+    {
+        if (_initSuccess)
+        {
+            if (position == nullptr)
+            {
+                return MotorControlState::PARAMETER_ERROR;
+            }
+            if (get_encoder(_axisChannel, &_position) == -1)
+            {
+                return MotorControlState::UNDEFINED;
+            }
+        }
+        *position = _position;
+        return MotorControlState::DEFINED;
+    }
+
+    MotorControlState Motor::RelativelyPosition(long* position)
+    {
+        long oldPosition = _position;
+        long newPosition = static_cast<long>(MotorControlState::UNDEFINED);
+        if (position == nullptr)
+        {
+            return MotorControlState::PARAMETER_ERROR;
+        }
+        if (AbsolutePosition(&newPosition) == MotorControlState::UNDEFINED)
+        {
+            return MotorControlState::UNDEFINED;
+        }
+        *position = newPosition - oldPosition;
+        return MotorControlState::DEFINED;
+        
     }
 
     MotorControlState Motor::ResetPosition()
@@ -430,6 +497,7 @@ namespace MotorComponent
         {
             if (enable_io_pos(card, static_cast<int>(flag)) == 0)
             {
+                _positionTriggerFlag = flag;
                 return MotorControlState::SUCCESS;
             }
         }
@@ -442,6 +510,7 @@ namespace MotorComponent
         {
             if (enable_sd(_axisChannel, static_cast<int>(flag)) == 0)
             {
+                _decelerationSignalFlag = flag;
                 return MotorControlState::SUCCESS;
             }
         }
@@ -454,6 +523,7 @@ namespace MotorComponent
         {
             if (enable_el(_axisChannel, static_cast<int>(flag)) == 0)
             {
+                _limitSignalFlag = flag;
                 return MotorControlState::SUCCESS;
             }
         }
@@ -466,6 +536,7 @@ namespace MotorComponent
         {
             if (enable_org(_axisChannel, static_cast<int>(flag)) == 0)
             {
+                _originSignalFlag = flag;
                 return MotorControlState::SUCCESS;
             }
         }
@@ -478,6 +549,7 @@ namespace MotorComponent
         {
             if (set_sd_logic(_axisChannel, static_cast<int>(mode)) == 0)
             {
+                _decelerationSignalMode = mode;
                 return MotorControlState::SUCCESS;
             }
         }
@@ -490,6 +562,7 @@ namespace MotorComponent
         {
             if (set_el_logic(_axisChannel, static_cast<int>(mode)) == 0)
             {
+                _limitSignalMode = mode;
                 return MotorControlState::SUCCESS;
             }
         }
@@ -502,6 +575,7 @@ namespace MotorComponent
         {
             if (set_org_logic(_axisChannel, static_cast<int>(mode)) == 0)
             {
+                _originSignalMode = mode;
                 return MotorControlState::SUCCESS;
             }
         }
@@ -514,6 +588,7 @@ namespace MotorComponent
         {
             if (set_alm_logic(_axisChannel, static_cast<int>(mode)) == 0)
             {
+                _alarmSignalMode = mode;
                 return MotorControlState::SUCCESS;
             }
         }

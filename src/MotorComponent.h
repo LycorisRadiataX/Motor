@@ -2,13 +2,13 @@
  * Detail : MPC08运动控制卡C++封装, 编译时最低C++标准为C++11
  * Author : LycorisRadiata
  * Date   : 2020.9.15
- * Ver    : v2.2.1.D.1057
+ * Ver    : v2.3.2.D.170201
 */
 
 #ifndef MOTORCOMPONENT_H_
 #define MOTORCOMPONENT_H_
 
-#include "Mpc.h"
+#include "../third_party/Mpc.h"
 
 namespace MotorComponent
 {
@@ -22,11 +22,11 @@ namespace MotorComponent
 
     enum class MotorControlState : int
     {
-        UNDEFINED = -1,
-        DEFINED = 1,
-        SUCCESS = 2,
-        FAILURE = 3,
-        PARAMETER_ERROR = 4
+        UNDEFINED = 0x7FFFFFFF,
+        DEFINED = 0x7FFFFFFE,
+        SUCCESS = 0x7FFFFFFD,
+        FAILURE = 0x7FFFFFFC,
+        PARAMETER_ERROR = 0x7FFFFFFB
     };
 
     enum class MoveDirection : int
@@ -162,6 +162,10 @@ namespace MotorComponent
 
         MotorControlState SetAbsolutePosition(long position);
 
+        MotorControlState AbsolutePosition(long* position);
+
+        MotorControlState RelativelyPosition(long* position);
+
         MotorControlState ResetPosition();
 
         MotorControlState SetPositionTriggerPoint(long startingPosition, long targetPosition);
@@ -184,6 +188,7 @@ namespace MotorComponent
     private:
         static bool _initSuccess;
         int _axisChannel;
+        long _position;
         enum MoveMode _moveMode;
         enum OriginDetectionMode _originDetectionMode;
         double _moveSpeed;
