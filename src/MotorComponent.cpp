@@ -25,7 +25,9 @@ namespace MotorComponent
         _decelerationSignalMode(static_cast<enum DecelerationSignalMode>(MotorControlState::UNDEFINED)),
         _limitSignalMode(static_cast<enum LimitSignalMode>(MotorControlState::UNDEFINED)),
         _originSignalMode(static_cast<enum OriginSignalMode>(MotorControlState::UNDEFINED)),
-        _alarmSignalMode(static_cast<enum AlarmSignalMode>(MotorControlState::UNDEFINED))
+        _alarmSignalMode(static_cast<enum AlarmSignalMode>(MotorControlState::UNDEFINED)),
+        _startingPosition(static_cast<long>(MotorControlState::UNDEFINED)),
+        _targetPosition(static_cast<long>(MotorControlState::UNDEFINED))
     {
 
     }
@@ -65,7 +67,7 @@ namespace MotorComponent
 
     }
 
-    MotorControlState Motor::SetMoveMode(enum MoveMode mode)
+    MotorControlState Motor::SetMoveMode(const enum MoveMode mode)
     {
         if (_initSuccess)
         {
@@ -95,7 +97,7 @@ namespace MotorComponent
         return MotorControlState::DEFINED;
     }
 
-    MotorControlState Motor::SetOriginDetectionMode(enum OriginDetectionMode mode)
+    MotorControlState Motor::SetOriginDetectionMode(const enum OriginDetectionMode mode)
     {
         if (_initSuccess)
         {
@@ -125,7 +127,7 @@ namespace MotorComponent
         return MotorControlState::DEFINED;
     }
 
-    MotorControlState Motor::SetMoveSpeed(double speed)
+    MotorControlState Motor::SetMoveSpeed(const double speed)
     {
         if (_initSuccess)
         {
@@ -156,7 +158,7 @@ namespace MotorComponent
         return MotorControlState::DEFINED;
     }
     
-    MotorControlState Motor::SetFastMoveSpeed(double startingSpeed, double targetSpeed, double accelerationSpeed)
+    MotorControlState Motor::SetFastMoveSpeed(const double startingSpeed, const double targetSpeed, const double accelerationSpeed)
     {
         if (_initSuccess)
         {
@@ -175,7 +177,7 @@ namespace MotorComponent
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::SetFastMoveSpeed(TrapezaidalSpeed* ts)
+    MotorControlState Motor::SetFastMoveSpeed(const TrapezaidalSpeed* const ts)
     {
         if (ts == nullptr)
         {
@@ -202,7 +204,7 @@ namespace MotorComponent
         return MotorControlState::DEFINED;
     }
 
-    MotorControlState Motor::SetInterpolationMoveSpeed(double speed)
+    MotorControlState Motor::SetInterpolationMoveSpeed(const double speed)
     {
         if (_initSuccess)
         {
@@ -233,7 +235,7 @@ namespace MotorComponent
         return MotorControlState::DEFINED;
     }
 
-    MotorControlState Motor::SetInterpolationFastMoveSpeed(double startingSpeed, double targetSpeed, double accelerationSpeed)
+    MotorControlState Motor::SetInterpolationFastMoveSpeed(const double startingSpeed, const double targetSpeed, const double accelerationSpeed)
     {
         if (_initSuccess)
         {
@@ -252,7 +254,7 @@ namespace MotorComponent
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::SetInterpolationFastMoveSpeed(TrapezaidalSpeed* ts)
+    MotorControlState Motor::SetInterpolationFastMoveSpeed(const TrapezaidalSpeed* const ts)
     {
         if (ts == nullptr)
         {
@@ -279,7 +281,7 @@ namespace MotorComponent
         return MotorControlState::DEFINED;
     }
 
-    MotorControlState Motor::SetMaxSpeed(double speed)
+    MotorControlState Motor::SetMaxSpeed(const double speed)
     {
         if (_initSuccess)
         {
@@ -325,7 +327,7 @@ namespace MotorComponent
         return MotorControlState::DEFINED;
     }
 
-    MotorControlState Motor::Move(long distance)
+    MotorControlState Motor::Move(const long distance)
     {
         if (_initSuccess)
         {
@@ -341,7 +343,7 @@ namespace MotorComponent
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::ContinuousMove(MoveDirection direction)
+    MotorControlState Motor::ContinuousMove(const MoveDirection direction)
     {
         if (_initSuccess)
         {
@@ -357,7 +359,7 @@ namespace MotorComponent
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::FastMove(long distance)
+    MotorControlState Motor::FastMove(const long distance)
     {
         if (_initSuccess)
         {
@@ -373,7 +375,7 @@ namespace MotorComponent
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::FastContinuousMove(MoveDirection direction)
+    MotorControlState Motor::FastContinuousMove(const MoveDirection direction)
     {
         if (_initSuccess)
         {
@@ -389,7 +391,7 @@ namespace MotorComponent
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::OriginMove(MoveDirection direction)
+    MotorControlState Motor::OriginMove(const MoveDirection direction)
     {
         if (_initSuccess)
         {
@@ -405,7 +407,7 @@ namespace MotorComponent
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::FastOriginMove(MoveDirection direction)
+    MotorControlState Motor::FastOriginMove(const MoveDirection direction)
     {
         if (_initSuccess)
         {
@@ -421,7 +423,31 @@ namespace MotorComponent
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::SetAbsolutePosition(long position)
+    MotorControlState Motor::StopMove()
+    {
+        if (_initSuccess)
+        {
+            if (sudden_stop(_axisChannel) == 0)
+            {
+                return MotorControlState::SUCCESS;
+            }
+        }
+        return MotorControlState::FAILURE;
+    }
+
+    MotorControlState Motor::StopFastMove()
+    {
+        if (_initSuccess)
+        {
+            if (decel_stop(_axisChannel) == 0)
+            {
+                return MotorControlState::SUCCESS;
+            }
+        }
+        return MotorControlState::FAILURE;
+    }
+
+    MotorControlState Motor::SetAbsolutePosition(const long position)
     {
         if (_initSuccess)
         {
@@ -479,19 +505,36 @@ namespace MotorComponent
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::SetPositionTriggerPoint(long startingPosition, long targetPosition)
+    MotorControlState Motor::SetPositionTriggerPoint(const long startingPosition, const long targetPosition)
     {
         if (_initSuccess)
         {
             if (set_io_pos(_axisChannel, startingPosition, targetPosition) == 0)
             {
+                _startingPosition = startingPosition;
+                _targetPosition = targetPosition;
                 return MotorControlState::SUCCESS;
             }
         }
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::SetPositionTriggerIsValid(int card, PositionTriggerFlag flag)
+     MotorControlState Motor::PositionTriggerPoint(long* startingPosition, long* targetPosition)
+     {
+         if (startingPosition == nullptr || targetPosition == nullptr)
+         {
+             return MotorControlState::PARAMETER_ERROR;
+         }
+         if (_startingPosition == static_cast<long>(MotorControlState::UNDEFINED) || _targetPosition == static_cast<long>(MotorControlState::UNDEFINED))
+         {
+             return MotorControlState::UNDEFINED;
+         }
+         *startingPosition = _startingPosition;
+         *targetPosition = _targetPosition;
+         return MotorControlState::DEFINED;
+     }
+
+    MotorControlState Motor::SetPositionTriggerIsValid(const int card, const PositionTriggerFlag flag)
     {
         if (_initSuccess)
         {
@@ -504,7 +547,21 @@ namespace MotorComponent
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::SetDecelerationSignalIsValid(DecelerationSignalFlag flag)
+    MotorControlState Motor::PositionTriggerIsValid(PositionTriggerFlag* flag)
+    {
+        if (flag == nullptr)
+        {
+            return MotorControlState::PARAMETER_ERROR;
+        }
+        if (_positionTriggerFlag == static_cast<PositionTriggerFlag>(MotorControlState::UNDEFINED))
+        {
+            return MotorControlState::UNDEFINED;
+        }
+        *flag = _positionTriggerFlag;
+        return MotorControlState::DEFINED;
+    }
+
+    MotorControlState Motor::SetDecelerationSignalIsValid(const DecelerationSignalFlag flag)
     {
         if (_initSuccess)
         {
@@ -517,7 +574,21 @@ namespace MotorComponent
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::SetLimitSignalIsValid(LimitSignalFlag flag)
+    MotorControlState Motor::DecelerationSignalIsValid(DecelerationSignalFlag* flag)
+    {
+        if (flag == nullptr)
+        {
+            return MotorControlState::PARAMETER_ERROR;
+        }
+        if (_decelerationSignalFlag == static_cast<DecelerationSignalFlag>(MotorControlState::UNDEFINED))
+        {
+            return MotorControlState::UNDEFINED;
+        }
+        *flag = _decelerationSignalFlag;
+        return MotorControlState::DEFINED;
+    }
+
+    MotorControlState Motor::SetLimitSignalIsValid(const LimitSignalFlag flag)
     {
         if (_initSuccess)
         {
@@ -530,7 +601,21 @@ namespace MotorComponent
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::SetOriginSignalIsValid(OriginSignalFlag flag)
+    MotorControlState Motor::LimitSignalIsValid(LimitSignalFlag* flag)
+    {
+        if (flag == nullptr)
+        {
+            return MotorControlState::PARAMETER_ERROR;
+        }
+        if (_limitSignalFlag == static_cast<LimitSignalFlag>(MotorControlState::UNDEFINED))
+        {
+            return MotorControlState::UNDEFINED;
+        }
+        *flag = _limitSignalFlag;
+        return MotorControlState::DEFINED;
+    }
+
+    MotorControlState Motor::SetOriginSignalIsValid(const OriginSignalFlag flag)
     {
         if (_initSuccess)
         {
@@ -543,7 +628,21 @@ namespace MotorComponent
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::SetDecelerationSignalMode(DecelerationSignalMode mode)
+    MotorControlState Motor::OriginSignalIsValid(OriginSignalFlag* flag)
+    {
+        if (flag == nullptr)
+        {
+            return MotorControlState::PARAMETER_ERROR;
+        }
+        if (_originSignalFlag == static_cast<OriginSignalFlag>(MotorControlState::UNDEFINED))
+        {
+            return MotorControlState::UNDEFINED;
+        }
+        *flag = _originSignalFlag;
+        return MotorControlState::DEFINED;
+    }
+
+    MotorControlState Motor::SetDecelerationSignalMode(const enum DecelerationSignalMode mode)
     {
         if (_initSuccess)
         {
@@ -556,7 +655,21 @@ namespace MotorComponent
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::SetLimitSignalMode(LimitSignalMode mode)
+    MotorControlState Motor::DecelerationSignalMode(enum DecelerationSignalMode* mode)
+    {
+        if (mode == nullptr)
+        {
+            return MotorControlState::PARAMETER_ERROR;
+        }
+        if (_decelerationSignalMode == static_cast<enum DecelerationSignalMode>(MotorControlState::UNDEFINED))
+        {
+            return MotorControlState::UNDEFINED;
+        }
+        *mode = _decelerationSignalMode;
+        return MotorControlState::DEFINED;
+    }
+
+    MotorControlState Motor::SetLimitSignalMode(const enum LimitSignalMode mode)
     {
         if (_initSuccess)
         {
@@ -569,7 +682,21 @@ namespace MotorComponent
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::SetOriginSignalMode(OriginSignalMode mode)
+     MotorControlState Motor::LimitSignalMode(enum LimitSignalMode* mode)
+     {
+         if (mode == nullptr)
+         {
+             return MotorControlState::PARAMETER_ERROR;
+         }
+         if (_limitSignalMode == static_cast<enum LimitSignalMode>(MotorControlState::UNDEFINED))
+         {
+             return MotorControlState::UNDEFINED;
+         }
+         *mode = _limitSignalMode;
+         return MotorControlState::DEFINED;
+     }
+
+    MotorControlState Motor::SetOriginSignalMode(const enum OriginSignalMode mode)
     {
         if (_initSuccess)
         {
@@ -582,7 +709,12 @@ namespace MotorComponent
         return MotorControlState::FAILURE;
     }
 
-    MotorControlState Motor::SetAlarmSignalMode(AlarmSignalMode mode)
+    MotorControlState Motor::OriginSignalMode(enum OriginSignalMode* mode)
+    {
+
+    }
+
+    MotorControlState Motor::SetAlarmSignalMode(const enum AlarmSignalMode mode)
     {
         if (_initSuccess)
         {
@@ -593,6 +725,46 @@ namespace MotorComponent
             }
         }
         return MotorControlState::FAILURE;
+    }
+
+    MotorControlState Motor::AlarmSignalMode(enum AlarmSignalMode* mode)
+    {
+
+    }
+
+    MotorControlState Motor::AxisFlag(int* flag)
+    {
+        
+    }
+
+    MotorControlState Motor::AxisStop(bool* stop)
+    {
+        
+    }
+
+    MotorControlState Motor::DecelerationSignal(bool* signal)
+    {
+
+    }
+
+    MotorControlState Motor::LimitSignal(bool* signal)
+    {
+
+    }
+
+    MotorControlState Motor::OriginSignal(bool* signal)
+    {
+
+    }
+
+    MotorControlState Motor::AlarmSignal(bool* signal)
+    {
+
+    }
+
+    MotorControlState Motor::DecelerationAndLimitAndOriginSignal(int card, int* flag)
+    {
+
     }
 
 }
