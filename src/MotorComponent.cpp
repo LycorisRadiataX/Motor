@@ -732,37 +732,99 @@ namespace MotorComponent
 
     }
 
-    MotorControlState Motor::AxisFlag(int* flag)
+    SingleAxisFlag Motor::AxisFlag(Motor_Control_State& mcs)
     {
-        
+        SingleAxisFlag saf = {false, false, false, false, false, false, false, false, false, false};
+        if (_initSuccess)
+        {
+            int flag = check_status(_axisChannel);
+            if (flag)
+            {
+                saf.origin = flag & 0x04000000;
+                saf.positiveLimit = flag & 0x02000000;
+                saf.negativeLimit = flag & 0x01000000;
+                saf.alarm = flag & 0x00010000;
+                saf.run = flag & 0x00000080;
+                saf.deceleration = flag & 0x00000008;;
+                saf.stopDueToOrigin = flag & 0x00000400;
+                saf.stopDueToPositiveLimit = flag & 0x00000200;
+                saf.stopDueToNegativeLimit = flag & 0x00000100;
+                saf.stopDueToAlarm = flag & 0x00002000;
+                if (mcs != nullptr)
+                {
+                    *mcs = Motor_Control_State::Success;
+                }
+                return saf;
+            }
+        }
+        if (mcs != nullptr)
+        {
+            *mcs = Motor_Control_State::Failure;
+        }
+        return saf;
     }
 
-    MotorControlState Motor::AxisStop(bool* stop)
+    bool Motor::AxisStop(Motor_Control_State& mcs)
     {
-        
+        if (check_done(_axisChannel) == 0)
+        {
+            mcs = Motor_Control_State::Success;
+            return true;
+        }
+        return false;
     }
 
-    MotorControlState Motor::DecelerationSignal(bool* signal)
+    bool Motor::DecelerationSignal(Motor_Control_State& mcs)
     {
-
+        if(check_SD(_axisChannel) == 1)
+        {
+            mcs = Motor_Control_State::Success;
+            return true;
+        }
+        return false;
     }
 
-    MotorControlState Motor::LimitSignal(bool* signal)
+    bool Motor::PositiveLimitSignal(Motor_Control_State& mcs)
     {
-
+        if (check_limit(_axisChannel) == 1 || check_limit(_axisChannel) == 2)
+        {
+            mcs = Motor_Control_State::Success;
+            return true;
+        }
+        return false;
     }
 
-    MotorControlState Motor::OriginSignal(bool* signal)
+    bool Motor::NegativeLimitSignal(Motor_Control_State& mcs)
     {
-
+        if (check_limit(_axisChannel) == -1 || check_limit(_axisChannel) == 2)
+        {
+            mcs = Motor_Control_State::Success;
+            return true;
+        }
+        return false;
     }
 
-    MotorControlState Motor::AlarmSignal(bool* signal)
+    bool Motor::OriginSignal(Motor_Control_State& mcs)
     {
-
+        if (check_home(_axisChannel) == 1)
+        {
+            mcs = Motor_Control_State::Success;
+            return true;
+        }
+        return false;
     }
 
-    MotorControlState Motor::DecelerationAndLimitAndOriginSignal(int card, int* flag)
+    bool Motor::AlarmSignal(Motor_Control_State& mcs)
+    {
+        if (check_alarm(_axisChannel) == 1)
+        {
+            mcs = Motor_Control_State::Success;
+            return true;
+        }
+        return false;
+    }
+
+    MotorControlState Motor::DecelerationAndLimitAndOriginSignal(int card, Motor_Control_State& mcs)
     {
 
     }

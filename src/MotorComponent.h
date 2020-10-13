@@ -109,6 +109,31 @@ namespace MotorComponent
         bool stopDueToAlarm;
     };
 
+    struct AllAxisSignalFlag
+    {
+        bool alarm;
+
+        bool originOne;
+        bool positiveLimitOne;
+        bool negativeLimitOne;
+        bool decelerationOne;
+
+        bool originTwo;
+        bool positiveLimitTwo;
+        bool negativeLimitTwo;
+        bool decelerationTwo;
+
+        bool originThree;
+        bool positiveLimitThree;
+        bool negativeLimitThree;
+        bool decelerationThree;
+
+        bool originFour;
+        bool positiveLimitFour;
+        bool negativeLimitFour;
+        bool decelerationFour;
+    };
+
     class Motor
     {
     public:
@@ -236,19 +261,21 @@ namespace MotorComponent
         Motor_Control_State SetAlarmSignalMode(const Alarm_Signal_Mode mode);
         Motor_Control_State AlarmSignalMode(Alarm_Signal_Mode* mode);
 
-        SingleAxisFlag AxisFlag(int* flag);
+        SingleAxisFlag AxisFlag(Motor_Control_State* mcs = nullptr);
 
-        Motor_Control_State AxisStop(bool* stop);
+        bool AxisStop(Motor_Control_State* mcs = nullptr);
 
-        Motor_Control_State DecelerationSignal(bool* signal);
+        bool DecelerationSignal(Motor_Control_State* mcs = nullptr);
 
-        Motor_Control_State LimitSignal(bool* signal);
+        bool PositiveLimitSignal(Motor_Control_State* mcs = nullptr);
 
-        Motor_Control_State OriginSignal(bool* signal);
+        bool NegativeLimitSignal(Motor_Control_State* mcs = nullptr);
 
-        Motor_Control_State AlarmSignal(bool* signal);
+        bool OriginSignal(Motor_Control_State* mcs = nullptr);
 
-        static Motor_Control_State DecelerationAndLimitAndOriginSignal(const int card, int* flag);
+        bool AlarmSignal(Motor_Control_State* mcs = nullptr);
+
+        static Motor_Control_State DecelerationAndLimitAndOriginSignal(const int card, Motor_Control_State* mcs);
 
     private:
         static bool _initSuccess;
