@@ -134,6 +134,12 @@ namespace MotorComponent
         bool decelerationFour;
     };
 
+    struct PositionTrigger
+    {
+        long startingPosition;
+        long targetPosition;
+    };
+
     class Motor
     {
     public:
@@ -154,128 +160,129 @@ namespace MotorComponent
         int Board();
 
         //初始化为默认设置
-        Motor_Control_State InitDefaultSetting();
+        void InitDefaultSetting();
         
         //设置运动模式
-        Motor_Control_State SetMoveMode(const MoveMode mode);
-        Motor_Control_State MoveMode(MoveMode* mode);
+        Motor_Control_State SetMoveMode(const Move_Mode mode);
+        Move_Mode MoveMode();
 
         //设置回原点时的检测模式
-        Motor_Control_State SetOriginDetectionMode(const OriginDetectionMode mode);
-        Motor_Control_State OriginDetectionMode(OriginDetectionMode* mode);
+        bool SetOriginDetectionMode(const Origin_Detection_Mode mode);
+        Origin_Detection_Mode OriginDetectionMode();
 
         //设置和获取运动和连续运动速度
-        Motor_Control_State SetMoveSpeed(const double speed);
-        Motor_Control_State MoveSpeed(double* speed);
+        bool SetMoveSpeed(const double speed);
+        double MoveSpeed();
 
         //设置和获取连续运动梯形速度
-        Motor_Control_State SetFastMoveSpeed(const double startingSpeed, const double targetSpeed, const double accelerationSpeed);
-        Motor_Control_State SetFastMoveSpeed(const TrapezaidalSpeed* const ts);
-        Motor_Control_State FastMoveSpeed(TrapezaidalSpeed* ts);
+        bool SetFastMoveSpeed(const double startingSpeed, const double targetSpeed, const double accelerationSpeed);
+        bool SetFastMoveSpeed(const TrapezaidalSpeed* const ts);
+        TrapezaidalSpeed FastMoveSpeed();
 
         //设置和获取插补运动速度
-        Motor_Control_State SetInterpolationMoveSpeed(const double Speed);
-        Motor_Control_State InterpolationMoveSpeed(double* speed);
+        bool SetInterpolationMoveSpeed(const double Speed);
+        double InterpolationMoveSpeed();
 
         //设置和获取插补连续运动速度
-        Motor_Control_State SetInterpolationFastMoveSpeed(const double startingSpeed, const double targetSpeed, const double accelerationSpeed);
-        Motor_Control_State SetInterpolationFastMoveSpeed(const TrapezaidalSpeed* const ts);
-        Motor_Control_State InterpolationFastMoveSpeed(TrapezaidalSpeed* ts);
+        bool SetInterpolationFastMoveSpeed(const double startingSpeed, const double targetSpeed, const double accelerationSpeed);
+        bool SetInterpolationFastMoveSpeed(const TrapezaidalSpeed* const ts);
+        TrapezaidalSpeed InterpolationFastMoveSpeed();
 
         //设置和获取最大速度
-        Motor_Control_State SetMaxSpeed(const double speed);
-        Motor_Control_State MaxSpeed(double* speed);
+        bool SetMaxSpeed(const double speed);
+        double MaxSpeed();
 
         //获取运行时实际速度
-        Motor_Control_State RunningSpeed(double* speed);
+        double RunningSpeed();
 
         //移动
-        Motor_Control_State Move(const long distance);
+        bool Move(const long distance);
 
         //连续移动
-        Motor_Control_State ContinuousMove(const Move_Direction direction);
+        bool ContinuousMove(const Move_Direction direction);
 
         //快速移动
-        Motor_Control_State FastMove(const long distance);
+        bool FastMove(const long distance);
 
         //快速连续移动
-        Motor_Control_State FastContinuousMove(const Move_Direction direction);
+        bool FastContinuousMove(const Move_Direction direction);
 
         //回原点移动
-        Motor_Control_State OriginMove(const Move_Direction direction);
+        bool OriginMove(const Move_Direction direction);
 
         //快速回原点移动
-        Motor_Control_State FastOriginMove(const Move_Direction direction);
+        bool FastOriginMove(const Move_Direction direction);
 
         //停止运动
-        Motor_Control_State StopMove();
+        bool StopMove();
 
         //停止快速运动
-        Motor_Control_State StopFastMove();
+        bool StopFastMove();
 
         //设置当前绝对位置, 但设置后点击不会进行实际运动
-        Motor_Control_State SetAbsolutePosition(const long position);
+        bool SetAbsolutePosition(const long position);
 
         //获取当前绝对位置
-        Motor_Control_State AbsolutePosition(long* position);
+        long AbsolutePosition();
 
         //获取当前相对位置值
-        Motor_Control_State RelativelyPosition(long* position);
+        long RelativelyPosition();
 
         //重置位置值
-        Motor_Control_State ResetPosition();
+        bool ResetPosition();
 
         //设置/获取位置触发点, 位置进入起始点时，自动触发输出 IO 信号（低电平）；当位置走出比较终止点时，自动触发输出高电平
-        Motor_Control_State SetPositionTriggerPoint(const long startingPosition, const long targetPosition);
-        Motor_Control_State PositionTriggerPoint(long* startingPosition, long* targetPosition);
+        bool SetPositionTriggerPoint(const long startingPosition, const long targetPosition);
+        bool SetPositionTriggerPoint(const PositionTrigger* pt);
+        PositionTrigger PositionTriggerPoint();
 
         //设置/获取位置触发是否有效
-        Motor_Control_State SetPositionTriggerIsValid(const int card, const Position_Trigger_Flag flag);
-        Motor_Control_State PositionTriggerIsValid(Position_Trigger_Flag* flag);
+        bool SetPositionTriggerIsValid(const int card, const Position_Trigger_Flag flag);
+        Position_Trigger_Flag PositionTriggerIsValid();
 
         //设置/获取减速信号是否有效
-        Motor_Control_State SetDecelerationSignalIsValid(const Deceleration_Signal_Flag flag);
-        Motor_Control_State DecelerationSignalIsValid(Deceleration_Signal_Flag* flag);
+        bool SetDecelerationSignalIsValid(const Deceleration_Signal_Flag flag);
+        Deceleration_Signal_Flag DecelerationSignalIsValid();
 
         //设置/获取限位信号是否有效
-        Motor_Control_State SetLimitSignalIsValid(const Limit_Signal_Flag flag);
-        Motor_Control_State LimitSignalIsValid(Limit_Signal_Flag* flag);
+        bool SetLimitSignalIsValid(const Limit_Signal_Flag flag);
+        Limit_Signal_Flag LimitSignalIsValid();
 
         //设置/获取原点信号是否有效
-        Motor_Control_State SetOriginSignalIsValid(const Origin_Signal_Flag flag);
-        Motor_Control_State OriginSignalIsValid(Origin_Signal_Flag* flag);
+        bool SetOriginSignalIsValid(const Origin_Signal_Flag flag);
+        Origin_Signal_Flag OriginSignalIsValid();
 
         //设置/获取减速信号触发模式
-        Motor_Control_State SetDecelerationSignalMode(const Deceleration_Signal_Mode mode);
-        Motor_Control_State DecelerationSignalMode(Deceleration_Signal_Mode* mode);
+        bool SetDecelerationSignalMode(const Deceleration_Signal_Mode mode);
+        Deceleration_Signal_Mode DecelerationSignalMode();
 
         //设置/获取限位信号触发模式
-        Motor_Control_State SetLimitSignalMode(const Limit_Signal_Mode mode);
-        Motor_Control_State LimitSignalMode(Limit_Signal_Mode* mode);
+        bool SetLimitSignalMode(const Limit_Signal_Mode mode);
+        Limit_Signal_Mode LimitSignalMode();
 
         //设置/获取原点信号触发模式
-        Motor_Control_State SetOriginSignalMode(const Origin_Signal_Mode mode);
-        Motor_Control_State OriginSignalMode(Origin_Signal_Mode* mode);
+        bool SetOriginSignalMode(const Origin_Signal_Mode mode);
+        Origin_Signal_Mode OriginSignalMode();
 
         //设置/获取报警信号触发模式
-        Motor_Control_State SetAlarmSignalMode(const Alarm_Signal_Mode mode);
-        Motor_Control_State AlarmSignalMode(Alarm_Signal_Mode* mode);
+        bool SetAlarmSignalMode(const Alarm_Signal_Mode mode);
+        Alarm_Signal_Mode AlarmSignalMode();
 
-        SingleAxisFlag AxisFlag(Motor_Control_State* mcs = nullptr);
+        SingleAxisFlag AxisFlag();
 
-        bool AxisStop(Motor_Control_State* mcs = nullptr);
+        bool AxisStop();
 
-        bool DecelerationSignal(Motor_Control_State* mcs = nullptr);
+        bool DecelerationSignal();
 
-        bool PositiveLimitSignal(Motor_Control_State* mcs = nullptr);
+        bool PositiveLimitSignal();
 
-        bool NegativeLimitSignal(Motor_Control_State* mcs = nullptr);
+        bool NegativeLimitSignal();
 
-        bool OriginSignal(Motor_Control_State* mcs = nullptr);
+        bool OriginSignal();
 
-        bool AlarmSignal(Motor_Control_State* mcs = nullptr);
+        bool AlarmSignal();
 
-        static Motor_Control_State DecelerationAndLimitAndOriginSignal(const int card, Motor_Control_State* mcs);
+        static AllAxisSignalFlag DecelerationAndLimitAndOriginSignal(const int card);
 
     private:
         static bool _initSuccess;
