@@ -23,7 +23,7 @@ namespace MotorComponent
         _originSignalMode(ORIGIN_SIGNAL_MODE::LOW_LEVEL),
         _decelerationSignalMode(DECELERATION_SIGNAL_MODE::LOW_LEVEL),
         _limitSignalMode(LIMIT_SIGNAL_MODE::HIGH_LEVEL),
-        _alarmSignalMode(ALARM_SIGNAL_MODE::LOW_LEVEL   )
+        _alarmSignalMode(ALARM_SIGNAL_MODE::LOW_LEVEL)
     {
         
     }
@@ -60,7 +60,23 @@ namespace MotorComponent
 
     void Motor::InitDefaultSetting()
     {
-
+        _position = 0;
+        _moveSpeed = 2000;
+        _fastMoveSpeed = {2000, 8000, 80000};
+        _interpolationMoveSpeed = 2000;
+        _interpolationFastMoveSpeed = {2000, 8000, 80000};
+        _maxSpeed = 0;
+        _positionTriggerPoint = {0, 0};
+        _moveMode = MOVE_MODE::PULSE_AND_DIRECTION;
+        _originDetectionMode = ORIGIN_DETECTION_MODE::SWITCH_SIGNAL;
+        _originSignalFlag = ORIGIN_SIGNAL_FLAG::SIGNAL_VALID;
+        _decelerationSignalFlag = DECELERATION_SIGNAL_FLAG::SIGNAL_VALID;
+        _limitSignalFlag = LILMIT_SIGNAL_FLAG::SIGNAL_VALID;
+        _positionTriggerFlag = POSITION_TRIGGER_FLAG::SIGNAL_INVALID;
+        _originSignalMode = ORIGIN_SIGNAL_MODE::LOW_LEVEL;
+        _decelerationSignalMode = DECELERATION_SIGNAL_MODE::LOW_LEVEL;
+        _limitSignalMode = LIMIT_SIGNAL_MODE::HIGH_LEVEL;
+        _alarmSignalMode = ALARM_SIGNAL_MODE::LOW_LEVEL;
     }
 
     bool Motor::SetMoveSpeed(const double speed)
