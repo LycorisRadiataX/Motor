@@ -140,10 +140,10 @@ namespace MotorComponent
         static bool Init();
 
         //获取总轴数
-        const int Axis();
+        int Axis();
 
         //获取总板卡数
-        const int Board();
+        int Board();
 
         //初始化为默认设置
         void InitDefaultSetting();
@@ -171,7 +171,7 @@ namespace MotorComponent
         const double& MaxSpeed();
 
         //获取运行时实际速度
-        const double RunningSpeed();
+        double RunningSpeed();
 
         //移动
         bool Move(const long distance);

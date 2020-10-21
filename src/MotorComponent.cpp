@@ -51,12 +51,12 @@ namespace MotorComponent
         return _initSuccess;
     }
 
-    const int Motor::Axis()
+    int Motor::Axis()
     {
         return get_max_axe();
     }
 
-    const int Motor::Board()
+    int Motor::Board()
     {
         return get_board_num();
     }
@@ -190,7 +190,7 @@ namespace MotorComponent
         return _maxSpeed;
     }
 
-    const double Motor::RunningSpeed()
+    double Motor::RunningSpeed()
     {
         return get_rate(_axisChannel);
     }
