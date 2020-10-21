@@ -2,7 +2,7 @@
  * Detail : MPC08运动控制卡C++封装, 编译时最低C++标准为C++11
  * Author : LycorisRadiata
  * Date   : 2020.9.15
- * Ver    : v3.3.2.D.164824
+ * Ver    : v4.3.2.d.145656
 */
 
 #ifndef MOTORCOMPONENT_H_
@@ -134,7 +134,7 @@ namespace MotorComponent
         Motor(Motor&) = delete;
         Motor(Motor&&) = delete;
         Motor& operator = (Motor&) = delete;
-        Motor& operator = (Motor&) = delete;
+        Motor& operator = (Motor&&) = delete;
 
         //硬件初始化, 全局调用一次即可
         static bool Init();
@@ -150,25 +150,25 @@ namespace MotorComponent
 
         //设置和获取运动和连续运动速度
         bool SetMoveSpeed(const double speed);
-        const double MoveSpeed();
+        const double& MoveSpeed();
 
         //设置和获取连续运动梯形速度
         bool SetFastMoveSpeed(const double startingSpeed, const double targetSpeed, const double accelerationSpeed);
         bool SetFastMoveSpeed(const TrapezaidalSpeed& ts);
-        const TrapezaidalSpeed FastMoveSpeed();
+        const TrapezaidalSpeed& FastMoveSpeed();
 
         //设置和获取插补运动速度
         bool SetInterpolationMoveSpeed(const double Speed);
-        const double InterpolationMoveSpeed();
+        const double& InterpolationMoveSpeed();
 
         //设置和获取插补连续运动速度
         bool SetInterpolationFastMoveSpeed(const double startingSpeed, const double targetSpeed, const double accelerationSpeed);
         bool SetInterpolationFastMoveSpeed(const TrapezaidalSpeed& ts);
-        const TrapezaidalSpeed InterpolationFastMoveSpeed();
+        const TrapezaidalSpeed& InterpolationFastMoveSpeed();
 
         //设置和获取最大速度
         bool SetMaxSpeed(const double speed);
-        const double MaxSpeed();
+        const double& MaxSpeed();
 
         //获取运行时实际速度
         const double RunningSpeed();
@@ -201,10 +201,10 @@ namespace MotorComponent
         bool SetAbsolutePosition(const long position);
 
         //获取当前绝对位置
-        const long AbsolutePosition();
+        const long& AbsolutePosition();
 
         //获取当前相对位置值
-        const long RelativelyPosition();
+        long RelativelyPosition();
 
         //重置位置值
         bool ResetPosition();
@@ -212,49 +212,49 @@ namespace MotorComponent
         //设置/获取位置触发点, 位置进入起始点时，自动触发输出 IO 信号（低电平）；当位置走出比较终止点时，自动触发输出高电平
         bool SetPositionTriggerPoint(const long startingPosition, const long targetPosition);
         bool SetPositionTriggerPoint(const PositionTrigger* pt);
-        const PositionTrigger PositionTriggerPoint();
+        const PositionTrigger& PositionTriggerPoint();
 
         //设置运动模式
         bool SetMoveMode(const MOVE_MODE mode);
-        const MOVE_MODE MoveMode();
+        const MOVE_MODE& MoveMode();
 
         //设置回原点时的检测模式
         bool SetOriginDetectionMode(const ORIGIN_DETECTION_MODE mode);
-        const ORIGIN_DETECTION_MODE OriginDetectionMode();
+        const ORIGIN_DETECTION_MODE& OriginDetectionMode();
 
         //设置/获取原点信号是否有效
         bool SetOriginSignalIsValid(const ORIGIN_SIGNAL_FLAG flag);
-        const ORIGIN_SIGNAL_FLAG OriginSignalIsValid();
+        const ORIGIN_SIGNAL_FLAG& OriginSignalIsValid();
 
         //设置/获取减速信号是否有效
         bool SetDecelerationSignalIsValid(const DECELERATION_SIGNAL_FLAG flag);
-        const DECELERATION_SIGNAL_FLAG DecelerationSignalIsValid();
+        const DECELERATION_SIGNAL_FLAG& DecelerationSignalIsValid();
 
         //设置/获取限位信号是否有效
         bool SetLimitSignalIsValid(const LILMIT_SIGNAL_FLAG flag);
-        const LILMIT_SIGNAL_FLAG LimitSignalIsValid();
+        const LILMIT_SIGNAL_FLAG& LimitSignalIsValid();
 
         //设置/获取位置触发是否有效
         bool SetPositionTriggerIsValid(const int card, const POSITION_TRIGGER_FLAG flag);
-        const POSITION_TRIGGER_FLAG PositionTriggerIsValid();
+        const POSITION_TRIGGER_FLAG& PositionTriggerIsValid();
 
         //设置/获取原点信号触发模式
         bool SetOriginSignalMode(const ORIGIN_SIGNAL_MODE mode);
-        const ORIGIN_SIGNAL_MODE OriginSignalMode();
+        const ORIGIN_SIGNAL_MODE& OriginSignalMode();
 
         //设置/获取减速信号触发模式
         bool SetDecelerationSignalMode(const DECELERATION_SIGNAL_MODE mode);
-        const DECELERATION_SIGNAL_MODE DecelerationSignalMode();
+        const DECELERATION_SIGNAL_MODE& DecelerationSignalMode();
 
         //设置/获取限位信号触发模式
         bool SetLimitSignalMode(const LIMIT_SIGNAL_MODE mode);
-        const LIMIT_SIGNAL_MODE LimitSignalMode();
+        const LIMIT_SIGNAL_MODE& LimitSignalMode();
 
         //设置/获取报警信号触发模式
         bool SetAlarmSignalMode(const ALARM_SIGNAL_MODE mode);
-        const ALARM_SIGNAL_MODE AlarmSignalMode();
+        const ALARM_SIGNAL_MODE& AlarmSignalMode();
 
-        const SingleAxisFlag AxisFlag();
+        const SingleAxisFlag& AxisFlag();
 
         bool AxisStop();
 
@@ -268,7 +268,7 @@ namespace MotorComponent
 
         bool AlarmSignal();
 
-        static const AllAxisSignalFlag DecelerationAndLimitAndOriginSignal(const int card);
+        static const AllAxisSignalFlag& DecelerationAndLimitAndOriginSignal(const int card);
 
     private:
         static bool _initSuccess;
@@ -300,6 +300,10 @@ namespace MotorComponent
         LIMIT_SIGNAL_MODE _limitSignalMode;
         
         ALARM_SIGNAL_MODE _alarmSignalMode;
+
+        SingleAxisFlag _saf;
+
+        static AllAxisSignalFlag _aasf;
     };
 
 }

@@ -4,6 +4,8 @@ namespace MotorComponent
 {
 
     bool Motor::_initSuccess = false;
+    AllAxisSignalFlag Motor::_aasf = {false, false, false, false, false, false, false, false, 
+        false, false, false, false, false, false, false, false, false};
 
     Motor::Motor(int axisChannel) :
         _axisChannel(axisChannel),
@@ -23,7 +25,8 @@ namespace MotorComponent
         _originSignalMode(ORIGIN_SIGNAL_MODE::LOW_LEVEL),
         _decelerationSignalMode(DECELERATION_SIGNAL_MODE::LOW_LEVEL),
         _limitSignalMode(LIMIT_SIGNAL_MODE::HIGH_LEVEL),
-        _alarmSignalMode(ALARM_SIGNAL_MODE::LOW_LEVEL)
+        _alarmSignalMode(ALARM_SIGNAL_MODE::LOW_LEVEL),
+        _saf{false, false, false, false, false, false, false, false, false, false}
     {
         
     }
@@ -92,7 +95,7 @@ namespace MotorComponent
         return false;
     }
 
-    const double Motor::MoveSpeed()
+    const double& Motor::MoveSpeed()
     {
         return _moveSpeed;
     }
@@ -117,7 +120,7 @@ namespace MotorComponent
         return SetFastMoveSpeed(ts.startingSpeed, ts.targetSpeed, ts.accelerationSpeed);
     }
 
-    const TrapezaidalSpeed Motor::FastMoveSpeed()
+    const TrapezaidalSpeed& Motor::FastMoveSpeed()
     {
         return _fastMoveSpeed;
     }
@@ -135,7 +138,7 @@ namespace MotorComponent
         return false;
     }
 
-    const double Motor::InterpolationMoveSpeed()
+    const double& Motor::InterpolationMoveSpeed()
     {
         return _interpolationMoveSpeed;
     }
@@ -164,7 +167,7 @@ namespace MotorComponent
         return SetInterpolationFastMoveSpeed(ts.startingSpeed, ts.targetSpeed, ts.accelerationSpeed);
     }
 
-    const TrapezaidalSpeed Motor::InterpolationFastMoveSpeed()
+    const TrapezaidalSpeed& Motor::InterpolationFastMoveSpeed()
     {
         return _interpolationFastMoveSpeed;
     }
@@ -182,7 +185,7 @@ namespace MotorComponent
         return false;
     }
 
-    const double Motor::MaxSpeed()
+    const double& Motor::MaxSpeed()
     {
         return _maxSpeed;
     }
@@ -300,13 +303,13 @@ namespace MotorComponent
         return false;
     }
 
-    const long Motor::AbsolutePosition()
+    const long& Motor::AbsolutePosition()
     {
         get_encoder(_axisChannel, &_position);
         return _position;
     }
 
-    const long Motor::RelativelyPosition()
+    long Motor::RelativelyPosition()
     {
         long oldPosition = _position;
         long newPosition = AbsolutePosition();
@@ -346,7 +349,7 @@ namespace MotorComponent
         return SetPositionTriggerPoint(pt->startingPosition, pt->targetPosition);
     }
 
-    const PositionTrigger Motor::PositionTriggerPoint()
+    const PositionTrigger& Motor::PositionTriggerPoint()
      {
          return _positionTriggerPoint;
      }
@@ -363,7 +366,7 @@ namespace MotorComponent
         return false;
     }
 
-    const MOVE_MODE Motor::MoveMode()
+    const MOVE_MODE& Motor::MoveMode()
     {
         return _moveMode;
     }
@@ -380,7 +383,7 @@ namespace MotorComponent
         return false;
     }
 
-    const ORIGIN_DETECTION_MODE Motor::OriginDetectionMode()
+    const ORIGIN_DETECTION_MODE& Motor::OriginDetectionMode()
     {
         return _originDetectionMode;
     }
@@ -398,7 +401,7 @@ namespace MotorComponent
         return false;
     }
 
-    const ORIGIN_SIGNAL_FLAG Motor::OriginSignalIsValid()
+    const ORIGIN_SIGNAL_FLAG& Motor::OriginSignalIsValid()
     {
         return _originSignalFlag;
     }
@@ -416,7 +419,7 @@ namespace MotorComponent
         return false;
     }
 
-    const DECELERATION_SIGNAL_FLAG Motor::DecelerationSignalIsValid()
+    const DECELERATION_SIGNAL_FLAG& Motor::DecelerationSignalIsValid()
     {
         return _decelerationSignalFlag;
     }
@@ -434,7 +437,7 @@ namespace MotorComponent
         return false;
     }
 
-    const LILMIT_SIGNAL_FLAG Motor::LimitSignalIsValid()
+    const LILMIT_SIGNAL_FLAG& Motor::LimitSignalIsValid()
     {
         return _limitSignalFlag;
     }
@@ -452,7 +455,7 @@ namespace MotorComponent
         return false;
     }
 
-    const POSITION_TRIGGER_FLAG Motor::PositionTriggerIsValid()
+    const POSITION_TRIGGER_FLAG& Motor::PositionTriggerIsValid()
     {
         return _positionTriggerFlag;
     }
@@ -470,7 +473,7 @@ namespace MotorComponent
         return false;
     }
 
-    const ORIGIN_SIGNAL_MODE Motor::OriginSignalMode()
+    const ORIGIN_SIGNAL_MODE& Motor::OriginSignalMode()
     {
         return _originSignalMode;
     }
@@ -488,7 +491,7 @@ namespace MotorComponent
         return false;
     }
 
-    const DECELERATION_SIGNAL_MODE Motor::DecelerationSignalMode()
+    const DECELERATION_SIGNAL_MODE& Motor::DecelerationSignalMode()
     {
         return _decelerationSignalMode;
     }
@@ -506,7 +509,7 @@ namespace MotorComponent
         return false;
     }
 
-    const LIMIT_SIGNAL_MODE Motor::LimitSignalMode()
+    const LIMIT_SIGNAL_MODE& Motor::LimitSignalMode()
     {
         return _limitSignalMode;
     }
@@ -524,33 +527,32 @@ namespace MotorComponent
         return false;
     }
 
-    const ALARM_SIGNAL_MODE Motor::AlarmSignalMode()
+    const ALARM_SIGNAL_MODE& Motor::AlarmSignalMode()
     {
         return _alarmSignalMode;
     }
 
-    const SingleAxisFlag Motor::AxisFlag()
+    const SingleAxisFlag& Motor::AxisFlag()
     {
-        SingleAxisFlag saf = {false, false, false, false, false, false, false, false, false, false};
         if (_initSuccess)
         {
             int flag = check_status(_axisChannel);
             if (flag)
             {
-                saf.origin = flag & 0x04000000;
-                saf.positiveLimit = flag & 0x02000000;
-                saf.negativeLimit = flag & 0x01000000;
-                saf.alarm = flag & 0x00010000;
-                saf.run = flag & 0x00000080;
-                saf.deceleration = flag & 0x00000008;;
-                saf.stopDueToOrigin = flag & 0x00000400;
-                saf.stopDueToPositiveLimit = flag & 0x00000200;
-                saf.stopDueToNegativeLimit = flag & 0x00000100;
-                saf.stopDueToAlarm = flag & 0x00002000;
-                return saf;
+                _saf.origin = flag & 0x04000000;
+                _saf.positiveLimit = flag & 0x02000000;
+                _saf.negativeLimit = flag & 0x01000000;
+                _saf.alarm = flag & 0x00010000;
+                _saf.run = flag & 0x00000080;
+                _saf.deceleration = flag & 0x00000008;;
+                _saf.stopDueToOrigin = flag & 0x00000400;
+                _saf.stopDueToPositiveLimit = flag & 0x00000200;
+                _saf.stopDueToNegativeLimit = flag & 0x00000100;
+                _saf.stopDueToAlarm = flag & 0x00002000;
+                return _saf;
             }
         }
-        return saf;
+        return _saf;
     }
 
     bool Motor::AxisStop()
@@ -607,31 +609,30 @@ namespace MotorComponent
         return false;
     }
 
-    const AllAxisSignalFlag Motor::DecelerationAndLimitAndOriginSignal(int card)
+    const AllAxisSignalFlag& Motor::DecelerationAndLimitAndOriginSignal(int card)
     {
-        AllAxisSignalFlag aasf = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
         int flag = check_SFR(card);
         if (flag != -1)
         {
-            aasf.alarm = flag & 0x00010000;
-            aasf.originOne = flag & 0x00000008;
-            aasf.positiveLimitOne = flag & 0x00000004;
-            aasf.negativeLimitOne = flag & 0x00000002;
-            aasf.decelerationOne = flag & 0x00000001;
-            aasf.originTwo = flag & 0x00000080;
-            aasf.positiveLimitTwo = flag & 0x00000040;
-            aasf.negativeLimitTwo = flag & 0x00000020;
-            aasf.decelerationTwo = flag & 0x00000010;
-            aasf.originThree = flag & 0x00000800;
-            aasf.positiveLimitThree = flag & 0x00000400;
-            aasf.negativeLimitThree = flag & 0x00000200;
-            aasf.decelerationThree = flag & 0x00000100;
-            aasf.originFour = flag & 0x00008000;
-            aasf.positiveLimitFour = flag & 0x00004000;
-            aasf.negativeLimitFour = flag & 0x00002000;
-            aasf.decelerationFour = flag & 0x00001000;
-            return aasf;
+            _aasf.alarm = flag & 0x00010000;
+            _aasf.originOne = flag & 0x00000008;
+            _aasf.positiveLimitOne = flag & 0x00000004;
+            _aasf.negativeLimitOne = flag & 0x00000002;
+            _aasf.decelerationOne = flag & 0x00000001;
+            _aasf.originTwo = flag & 0x00000080;
+            _aasf.positiveLimitTwo = flag & 0x00000040;
+            _aasf.negativeLimitTwo = flag & 0x00000020;
+            _aasf.decelerationTwo = flag & 0x00000010;
+            _aasf.originThree = flag & 0x00000800;
+            _aasf.positiveLimitThree = flag & 0x00000400;
+            _aasf.negativeLimitThree = flag & 0x00000200;
+            _aasf.decelerationThree = flag & 0x00000100;
+            _aasf.originFour = flag & 0x00008000;
+            _aasf.positiveLimitFour = flag & 0x00004000;
+            _aasf.negativeLimitFour = flag & 0x00002000;
+            _aasf.decelerationFour = flag & 0x00001000;
+            return _aasf;
         }
-        return aasf;
+        return _aasf;
     }
 }
